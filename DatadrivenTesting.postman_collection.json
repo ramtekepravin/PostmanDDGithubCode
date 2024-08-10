@@ -1,0 +1,391 @@
+{
+	"info": {
+		"_postman_id": "04cc7040-4ea7-46d6-8b62-4b93484ca6c6",
+		"name": "DatadrivenTesting",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9706968"
+	},
+	"item": [
+		{
+			"name": "DD Get ProjectId",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Verify the status code is 200\r",
+							"\r",
+							"pm.test(\"Verify the status code is 200\", function(){\r",
+							"    pm.response.to.have.status(200);\r",
+							"})\r",
+							"\r",
+							"// Verify the response has data in body\r",
+							"\r",
+							"pm.test(\"Verify the response has data in body\", function(){\r",
+							"   \r",
+							"   pm.response.to.have.body();\r",
+							"\r",
+							"})\r",
+							"\r",
+							"// Verify the response time is less than 12000 ms\r",
+							"pm.test(\"Verify the response time is less than 12000 ms\", function(){\r",
+							"\r",
+							"   pm.expect(pm.response.responseTime).to.below(12000);\r",
+							"   \r",
+							"})\r",
+							"\r",
+							"// Verify respone have header with content type\r",
+							"\r",
+							"pm.test(\"Verify response have header with content type\", function(){\r",
+							"\r",
+							"    pm.response.to.have.header(\"Content-Type\");\r",
+							"})\r",
+							"\r",
+							"\r",
+							"// Verify header has content type as \"application/json\"\r",
+							"pm.test(\"Verify header has content type as application/json\", function() {\r",
+							"pm.expect(pm.response.headers.get(\"Content-Type\")).to.eql('application/json;charset=UTF-8');\r",
+							"})\r",
+							"\r",
+							"// Verify response body has text \r",
+							"\r",
+							"pm.test(\"Verify response body has text\", function(){\r",
+							"\r",
+							"    pm.expect(pm.response.text()).to.include(50);\r",
+							"    pm.expect(pm.response.text()).to.include(\"Demo Project\");\r",
+							"})\r",
+							"\r",
+							"// Set variable for projectid\r",
+							"const response = pm.response.json();\r",
+							"console.log(response.values[1].id);\r",
+							"\r",
+							"\r",
+							"pm.collectionVariables.set(\"ddProjectId\",response.values[1].id);\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{jToken}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{userName}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{jiraURL}}/rest/api/3/project/search",
+					"host": [
+						"{{jiraURL}}"
+					],
+					"path": [
+						"rest",
+						"api",
+						"3",
+						"project",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DD Set IssueId",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"\r",
+							"// Verify the status code is 200 for success\r",
+							"pm.test(\"Verify the status code is 200 for success\", function (){\r",
+							"    pm.response.to.have.status(200);\r",
+							"})\r",
+							"\r",
+							"// Set variable to get issuetyeid using datadriven csv file\r",
+							"\r",
+							"const jsonData = pm.response.json();\r",
+							"/* const issTp = jsonData.map((value) => value.name);\r",
+							"pm.collectionVariables.set(\"ddIssueId\", jsonData[issTp.indexOf(pm.iterationData.get(\"issueType\"))].id); */\r",
+							"\r",
+							"/* Use of variables instead of iteration so that script can run individually as well as in collection */ \r",
+							"\r",
+							" const issTp = jsonData.map((value) => value.name);\r",
+							"pm.collectionVariables.set(\"ddIssueId\", jsonData[issTp.indexOf(pm.variables.get(\"issueType\"))].id);   \r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{jToken}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{userName}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{jiraURL}}/rest/api/3/issuetype",
+					"host": [
+						"{{jiraURL}}"
+					],
+					"path": [
+						"rest",
+						"api",
+						"3",
+						"issuetype"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DD Set ReporterID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"\r",
+							"// Verify the status code is 200 for success\r",
+							"pm.test(\"Verify the status code is 200 for success\", function (){\r",
+							"    pm.response.to.have.status(200);\r",
+							"})\r",
+							"\r",
+							"// Set variable to get reporterId based \r",
+							"var jsonData = pm.response.json();\r",
+							"console.log(jsonData[0].accountId);\r",
+							"pm.collectionVariables.set(\"ddRepId\",jsonData[0].accountId);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "{{userName}}",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "{{jToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{jiraURL}}/rest/api/3/user/assignable/multiProjectSearch?projectKeys=KAN",
+					"host": [
+						"{{jiraURL}}"
+					],
+					"path": [
+						"rest",
+						"api",
+						"3",
+						"user",
+						"assignable",
+						"multiProjectSearch"
+					],
+					"query": [
+						{
+							"key": "projectKeys",
+							"value": "KAN"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DD Create Issue",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"\r",
+							"// Versify status code is 201 -- created\r",
+							"pm.test(\"Versify status code is 201 -- created\",function(){\r",
+							"    pm.response.to.have.status(201);\r",
+							"})\r",
+							"\r",
+							"var jsonData = pm.response.json();\r",
+							"console.log(jsonData.key);\r",
+							"pm.collectionVariables.set(\"newkey\",jsonData.key);\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "{{userName}}",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "{{jToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"fields\": {\r\n        \"issuetype\": {\r\n            \"id\": \"{{ddIssueId}}\"\r\n        },\r\n        \"project\": {\r\n            \"id\": \"{{ddProjectId}}\"\r\n        },\r\n        \"reporter\": {\r\n            \"id\": \"{{ddRepId}}\"\r\n        },\r\n        \"summary\": \"{{$randomPhrase}}\"\r\n    },\r\n        \"update\": {}\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{jiraURL}}/rest/api/3/issue",
+					"host": [
+						"{{jiraURL}}"
+					],
+					"path": [
+						"rest",
+						"api",
+						"3",
+						"issue"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "ddProjectId",
+			"value": ""
+		},
+		{
+			"key": "ddIssueId",
+			"value": ""
+		},
+		{
+			"key": "ddRepId",
+			"value": ""
+		},
+		{
+			"key": "newkey",
+			"value": ""
+		},
+		{
+			"key": "issueType",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
